@@ -19,14 +19,11 @@ except ImportError:
     import mock
 
 from jsonschema import (
-    PY3, SchemaError, UnknownType, ValidationError, ErrorTree,
-    Draft3Validator, iteritems, validate
+    SchemaError, UnknownType, ValidationError, ErrorTree,
+    Draft3Validator, validate
 )
-
-
-if PY3:
-    basestring = unicode = str
-
+import six
+from six import iteritems
 
 def make_case(schema, data, valid, cls):
     def test_case(self):
@@ -60,7 +57,7 @@ def load_json_cases(test_dir):
                             re.sub(r"[\W ]+", "_", test["description"]),
                         )
 
-                        if not PY3:
+                        if not six.PY3:
                             test_name = test_name.encode("utf-8")
                         a_test.__name__ = test_name
 
@@ -97,14 +94,14 @@ class ParametrizedTestCase(type):
                         names.append(parametrized_name)
 
                     fn_name = "_".join(names)
-                    if not PY3:
+                    if not six.PY3:
                         fn_name = fn_name.encode('utf8')
                     fn.__name__ = fn_name
                     attr[fn.__name__] = fn
             else:
                 attr[k] = v
 
-        if not PY3:
+        if not six.PY3:
             name = name.encode('utf8')
 
         return super(ParametrizedTestCase, cls).__new__(cls, name, bases, attr)
@@ -153,7 +150,7 @@ def validation_test(schema=(), initkwargs=(), **kwschema):
 
 
 class TestValidate(ParameterizedTestCase, TestCase):
-    @skipIf(PY3, "The JSON module in Python 3 always produces unicode")
+    @skipIf(six.PY3, "The JSON module in Python 3 always produces unicode")
     def test_string_a_bytestring_is_a_string(self):
         validate(b"foo", {"type" : "string"})
 

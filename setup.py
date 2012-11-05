@@ -35,4 +35,5 @@ setup(
     license="MIT/X",
     long_description=long_description,
     url="http://github.com/Julian/jsonschema",
+    requires=["six"]
 )
